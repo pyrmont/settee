@@ -9,9 +9,6 @@ typedef struct {
 
 /* Forward Declarations */
 
-/* static void settee_set_push(settee_set_t *set, Janet *item, bool immutable); */
-/* static Janet settee_set_get_at_index(settee_set_t *set, size_t index); */
-
 /* Utility Methods */
 
 int settee_set_in(settee_set_t *set, Janet value) {
@@ -72,12 +69,10 @@ static int settee_set_get(void *p, Janet key, Janet *out) {
     }
 
     settee_set_t *set = (settee_set_t *)p;
-    if (!settee_set_in(set, key)) {
-        return 0;
-    } else {
-        *out = key;
-        return 1;
-    }
+    if (!settee_set_in(set, key)) return 0;
+
+    *out = key;
+    return 1;
 }
 
 /* Inserting */
@@ -107,13 +102,8 @@ static void settee_set_to_string(void *p, JanetBuffer *buf) {
 /* Comparing */
 
 static int settee_set_compare_sizes(settee_set_t *a, settee_set_t *b) {
-    if (a->data->count == b->data->count) {
-        return 0;
-    } else if (a->data->count > b->data->count) {
-        return 1;
-    } else {
-        return -1;
-    }
+    return (a->data->count == b->data->count) ? 0 :
+           (a->data->count >  b->data->count) ? 1 : -1;
 }
 
 static int settee_set_compare(void *p1, void *p2) {
@@ -150,7 +140,6 @@ static int32_t settee_set_hash(void *p, size_t size) {
 
 static Janet settee_set_next(void *p, Janet key) {
     settee_set_t *set = (settee_set_t *)p;
-
     return janet_next(janet_wrap_table(set->data), key);
 }
 
